@@ -11,13 +11,19 @@ public class Message {
 	public Message(byte[] data) {
 		
 		// TODO - START
-		
-		if (true)
-			throw new UnsupportedOperationException(TODO.constructor("Message"));
-			
+		if(data != null && data.length < 128) {
+			this.data = data;
+		}
+		else {
+			throw new IllegalArgumentException("Ulovleg data");
+		}
 		// TODO - END
 	}
 
+	public void setData(byte[] data) {
+		this.data = data;
+	}
+	
 	public byte[] getData() {
 		return this.data; 
 	}

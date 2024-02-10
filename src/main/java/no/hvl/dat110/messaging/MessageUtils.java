@@ -1,48 +1,41 @@
 package no.hvl.dat110.messaging;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import no.hvl.dat110.TODO;
 
+import java.nio.ByteBuffer;
+
 public class MessageUtils {
 
-	public static final int SEGMENTSIZE = 128;
+    public static final int SEGMENTSIZE = 128;
 
-	public static int MESSAGINGPORT = 8080;
-	public static String MESSAGINGHOST = "localhost";
+    public static int MESSAGINGPORT = 8080;
+    public static String MESSAGINGHOST = "localhost";
 
-	public static byte[] encapsulate(Message message) {
-		
-		byte[] segment = null;
-		byte[] data;
-		
-		// TODO - START
-		
-		// encapulate/encode the payload data of the message and form a segment
-		// according to the segment format for the messaging layer
-		
-		if (true)
-			throw new UnsupportedOperationException(TODO.method());
-			
-		// TODO - END
-		return segment;
-		
-	}
+    public static byte[] encapsulate(Message message) {
+        byte[] segment;
+        byte[] data = message.getData();
 
-	public static Message decapsulate(byte[] segment) {
+        segment = new byte[SEGMENTSIZE];
+        int size = data.length;
+        segment[0] = (byte) size;
+        for(int i = 0; i < size; i++) {
+        	segment[i + 1] = data[i];
+        }
+        return segment;
+    }
 
-		Message message = null;
-		
-		// TODO - START
-		// decapsulate segment and put received payload data into a message
-		
-		if (true)
-			throw new UnsupportedOperationException(TODO.method());
-		
-		// TODO - END
-		
-		return message;
-		
-	}
-	
+    public static Message decapsulate(byte[] segment) {
+    	int size = segment[0];
+    	byte[] data = new byte[size];
+    	for(int i = 0; i < size; i++) {
+    		data[i] = segment[i + 1];
+    	}
+        Message message = new Message(data);
+        return message;
+    }
+
 }
+

@@ -43,12 +43,20 @@ public class RPCServer {
 		   
 		   // TODO - START
 		   // - receive a Message containing an RPC request
+		   requestmsg = msgserver.accept().receive();
 		   // - extract the identifier for the RPC method to be invoked from the RPC request
+		   byte[] data = requestmsg.getData();
+		   byte msgid = data[0];
 		   // - extract the method's parameter by decapsulating using the RPCUtils
+		   
 		   // - lookup the method to be invoked
+		   RPCRemoteImpl method = services.get(msgid);
 		   // - invoke the method and pass the param
+		   
 		   // - encapsulate return value 
+		   
 		   // - send back the message containing the RPC reply
+		   
 			
 		   if (true)
 				throw new UnsupportedOperationException(TODO.method());

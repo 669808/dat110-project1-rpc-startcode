@@ -35,13 +35,13 @@ public class TestMessaging {
 					server = new MessagingServer(MessageUtils.MESSAGINGPORT);
 
 					MessageConnection connection = server.accept();
-
+					System.out.println("MAFAA");
 					Message request = connection.receive();
-
+					System.out.println("CRAYYYY");
 					byte[] serverreceived = request.getData();
-
+					System.out.println("WTF");
 					Message reply = new Message(serverreceived);
-
+					System.out.println("Yo");
 					connection.send(reply);
 
 					connection.close();
