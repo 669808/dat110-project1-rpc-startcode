@@ -73,22 +73,21 @@ public class RPCUtils {
 		byte[] encoded = null;
 		
 		// TODO - START 
-		
-		if (true)
-			throw new UnsupportedOperationException(TODO.method());
-				
+		return new byte[0];
 		// TODO - END
 		
-		return encoded;
 		
 	}
 	
 	public static void unmarshallVoid(byte[] data) {
 		
 		// TODO
-		
-		if (true)
-			throw new UnsupportedOperationException(TODO.method());
+		if (data == null || data.length == 0) {
+	        // Possibly log a warning or throw a specific exception if necessary
+	        System.out.println("No data provided or data is empty.");
+	        return;
+	    }
+	    System.out.println("Data received.");
 		
 	}
 

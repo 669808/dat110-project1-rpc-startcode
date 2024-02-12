@@ -30,8 +30,8 @@ public class MessageUtils {
     public static Message decapsulate(byte[] segment) {
     	int size = segment[0];
     	byte[] data = new byte[size];
-    	for(int i = 0; i < size; i++) {
-    		data[i] = segment[i + 1];
+    	for(int i = 1; i <= size; i++) {
+    		data[i - 1] = segment[i];
     	}
         Message message = new Message(data);
         return message;

@@ -1,9 +1,10 @@
 package no.hvl.dat110.messaging;
 
+import java.io.Serializable;
+
 import no.hvl.dat110.TODO;
 
 public class Message {
-
 	// the up to 127 bytes of data (payload) that a message can hold
 	private byte[] data;
 

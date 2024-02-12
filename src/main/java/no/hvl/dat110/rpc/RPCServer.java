@@ -11,71 +11,77 @@ public class RPCServer {
 
 	private MessagingServer msgserver;
 	private MessageConnection connection;
-	
+
 	// hashmap to register RPC methods which are required to extend RPCRemoteImpl
 	// the key in the hashmap is the RPC identifier of the method
-	private HashMap<Byte,RPCRemoteImpl> services;
-	
+	private HashMap<Byte, RPCRemoteImpl> services;
+
 	public RPCServer(int port) {
-		
+
 		this.msgserver = new MessagingServer(port);
-		this.services = new HashMap<Byte,RPCRemoteImpl>();
-		
+		this.services = new HashMap<Byte, RPCRemoteImpl>();
+
 	}
-	
+
 	public void run() {
-		
+
 		// the stop RPC method is built into the server
-		RPCRemoteImpl rpcstop = new RPCServerStopImpl(RPCCommon.RPIDSTOP,this);
-		
+		RPCRemoteImpl rpcstop = new RPCServerStopImpl(RPCCommon.RPIDSTOP, this);
+
 		System.out.println("RPC SERVER RUN - Services: " + services.size());
-			
-		connection = msgserver.accept(); 
-		
+
+		connection = msgserver.accept();
+
 		System.out.println("RPC SERVER ACCEPTED");
-		
+
 		boolean stop = false;
-		
+
 		while (!stop) {
-	    
-		   byte rpcid = 0;
-		   Message requestmsg, replymsg;
-		   
-		   // TODO - START
-		   // - receive a Message containing an RPC request
-		   requestmsg = msgserver.accept().receive();
-		   // - extract the identifier for the RPC method to be invoked from the RPC request
-		   byte[] data = requestmsg.getData();
-		   byte msgid = data[0];
-		   // - extract the method's parameter by decapsulating using the RPCUtils
-		   
-		   // - lookup the method to be invoked
-		   RPCRemoteImpl method = services.get(msgid);
-		   // - invoke the method and pass the param
-		   
-		   // - encapsulate return value 
-		   
-		   // - send back the message containing the RPC reply
-		   
+
+			byte rpcid = 0;
+			Message requestmsg, replymsg;
+
+			// TODO - START
+			// - receive a Message containing an RPC request
+			requestmsg = connection.receive();
 			
-		   if (true)
-				throw new UnsupportedOperationException(TODO.method());
-		   
-		   // TODO - END
+			// - extract the method's parameter by decapsulating using the RPCUtils
+			rpcid = requestmsg.getData()[0];
+
+			// Assuming RPCUtils for decapsulation and encapsulation of messages
+			byte[] requestPayload = RPCUtils.decapsulate(requestmsg.getData());
+
+			// - lookup the method to be invoked
+			RPCRemoteImpl method = services.get(rpcid);
+
+			if (method != null) {
+				// - invoke the method and pass the param
+				byte[] replyPayload = method.invoke(requestPayload);
+
+				// - encapsulate return value
+				replymsg = new Message(RPCUtils.encapsulate(rpcid, replyPayload));
+
+				// - send back the message containing the RPC reply
+				connection.send(replymsg);
+			} else {
+				System.out.println("RPCServer - No service for RPCID: " + rpcid);
+			}
+			// TODO - END
 
 			// stop the server if it was stop methods that was called
-		   if (rpcid == RPCCommon.RPIDSTOP) {
-			   stop = true;
-		   }
+			if (rpcid == RPCCommon.RPIDSTOP) {
+				stop = true;
+			}
 		}
-	
+
 	}
-	
-	// used by server side method implementations to register themselves in the RPC server
+
+	// used by server side method implementations to register themselves in the RPC
+	// server
 	public void register(byte rpcid, RPCRemoteImpl impl) {
 		services.put(rpcid, impl);
 	}
-	
+
 	public void stop() {
 
 		if (connection != null) {
@@ -83,12 +89,12 @@ public class RPCServer {
 		} else {
 			System.out.println("RPCServer.stop - connection was null");
 		}
-		
+
 		if (msgserver != null) {
 			msgserver.stop();
 		} else {
 			System.out.println("RPCServer.stop - msgserver was null");
 		}
-		
+
 	}
 }

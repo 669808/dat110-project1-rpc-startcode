@@ -10,27 +10,27 @@ public class RPCClient {
 
 	// underlying messaging connection used for RPC communication
 	private MessageConnection connection;
-	
+
 	public RPCClient(String server, int port) {
-	
-		msgclient = new MessagingClient(server,port);
+
+		msgclient = new MessagingClient(server, port);
 	}
-	
+
 	public void connect() {
-		
+
 		// TODO - START
 		// connect using the RPC client
 		connection = msgclient.connect();
-		if(connection == null)
-			throw new RuntimeException("feil");
+		if (connection == null)
+			throw new RuntimeException("Connection failed");
 		// TODO - END
 	}
-	
+
 	public void disconnect() {
-		
+
 		// TODO - START
 		// disconnect by closing the underlying messaging connection
-		if(connection != null) {
+		if (connection != null) {
 			connection.close();
 			connection = null;
 		}
@@ -38,31 +38,30 @@ public class RPCClient {
 	}
 
 	/*
-	 Make a remote call om the method on the RPC server by sending an RPC request message and receive an RPC reply message
-
-	 rpcid is the identifier on the server side of the method to be called
-	 param is the marshalled parameter of the method to be called
+	 * Make a remote call om the method on the RPC server by sending an RPC request
+	 * message and receive an RPC reply message
+	 * 
+	 * rpcid is the identifier on the server side of the method to be called param
+	 * is the marshalled parameter of the method to be called
 	 */
 
 	public byte[] call(byte rpcid, byte[] param) {
-		
-		byte[] returnval = null;
-		
 		// TODO - START
-
 		/*
-
-		The rpcid and param must be encapsulated according to the RPC message format
-
-		The return value from the RPC call must be decapsulated according to the RPC message format
-
-		*/
-		if(param != null && param.length > 0)
-			returnval = RPCUtils.encapsulate(rpcid, param);
-		
-		// TODO - END
+		 * The rpcid and param must be encapsulated according to the RPC message format
+		 * The return value from the RPC call must be decapsulated according to the RPC
+		 * message format
+		 */
+		byte[] payload = RPCUtils.encapsulate(rpcid, param);
+		Message requestmsg = new Message(payload);
+		connection.send(requestmsg);
+		Message response = connection.receive();
+		if (response == null) {
+			throw new RuntimeException("No response received from server");
+		}
+		byte[] returnval = RPCUtils.decapsulate(response.getData());
 		return returnval;
-		
+		// TODO - END
 	}
 
 }
